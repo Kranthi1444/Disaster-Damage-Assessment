@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Disaster Damage Assessment</title>
+</head>
+<body>
+    <h1>Disaster Damage Assessment</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required />
+        <button type="submit">Upload & Predict</button>
+    </form>
+
+    {% if image_url %}
+    <h2>Uploaded Image:</h2>
+    <img src="{{ image_url }}" alt="Uploaded Image" width="300" />
+    {% endif %}
+
+    {% if prediction %}
+    <h2>Prediction: {{ prediction }}</h2>
+    {% endif %}
+
+    <p>Model Accuracy: {{ accuracy }}</p>
+</body>
+</html>

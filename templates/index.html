@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Damage Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        img {
+            margin-top: 15px;
+            max-width: 300px;
+            border-radius: 10px;
+        }
+
+        .accuracy-box {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Damage Detection System</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required><br>
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <p><strong>Prediction:</strong> {{ prediction }}</p>
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="Uploaded Image">
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="accuracy-box">
+            Model Accuracy: {{ accuracy }}%
+        </div>
+
+        <footer>
+            &copy; 2025 Disaster ML Project
+        </footer>
+    </div>
+</body>
+</html>
