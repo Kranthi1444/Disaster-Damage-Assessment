@@ -1,28 +1,45 @@
 import torch
 from model import DamageClassifier
-from predict import predict_image  # your prediction function
+from predict import predict_image  # your updated prediction function
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class_names = ['no-damage', 'minor-damage', 'major-damage', 'destroyed']
+# These are the incident type class labels used during training
+class_names = ['collapsed_building', 'fire', 'flooded_areas', 'normal', 'traffic_incident']
 
-model = DamageClassifier(num_classes=4)
+# Mapping incident class to damage level
+incident_to_damage = {
+    'collapsed_building': 'destroyed',
+    'fire': 'major-damage',
+    'flooded_areas': 'minor-damage',
+    'traffic_incident': 'minor-damage',
+    'normal': 'no-damage'
+}
 
-# Load the checkpoint and add 'resnet.' prefix to all keys
-checkpoint = torch.load("model_aider.pth", map_location=device)
-new_state_dict = {}
-for k, v in checkpoint.items():
-    new_key = "resnet." + k
-    new_state_dict[new_key] = v
+# Mapping damage level to estimated cost
+cost_mapping = {
+    'no-damage': 0,
+    'minor-damage': 5000,
+    'major-damage': 50000,
+    'destroyed': 500000
+}
 
-# Remove fc layer weights from checkpoint to avoid size mismatch
-new_state_dict = {k: v for k, v in new_state_dict.items() if not k.startswith('resnet.fc.')}
-
-model.load_state_dict(new_state_dict, strict=False)  # strict=False allows missing keys
-
+# Load your trained model
+model = DamageClassifier(num_classes=len(class_names))
+model.load_state_dict(torch.load("model_aider.pth", map_location=device))
 model.to(device)
 model.eval()
 
+# Path to test image
 image_path = r"D:\Kranthi\damage_asses-main\mini_xbd\download.jpeg"
-prediction = predict_image(model, image_path, class_names, device)
-print(f"Prediction: {prediction}")
+
+# Predict incident class
+incident_label = predict_image(model, image_path, class_names, device)[0]
+
+# Map to damage class and cost
+damage_class = incident_to_damage.get(incident_label, 'no-damage')
+repair_cost = cost_mapping.get(damage_class, 0)
+
+print(f"Incident Class: {incident_label}")
+print(f"Mapped Damage Class: {damage_class}")
+print(f"Estimated Repair Cost: ₹{repair_cost:,}")
